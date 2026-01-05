@@ -1,0 +1,64 @@
+# Production overrides for docker-compose.yml
+# Usage: docker-compose -f novacore/docker-compose.yml -f novacore/docker-compose.prod.yml --profile infra up -d
+
+services:
+  postgres:
+    ports: []  # Don't expose ports in production (use internal network)
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '4.0'
+        reservations:
+          memory: 1G
+          cpus: '1.0'
+
+  redis:
+    ports: []  # Don't expose ports in production
+    command: >
+      sh -c "redis-server /usr/local/etc/redis/redis.conf
+             --requirepass ${REDIS_PASSWORD}
+             --port 6379
+             --maxmemory 1gb
+             --maxmemory-policy allkeys-lru"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '2.0'
+        reservations:
+          memory: 256M
+          cpus: '0.5'
+
+  zookeeper:
+    ports: []  # Don't expose ports in production
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+
+  kafka:
+    ports: []  # Don't expose ports in production
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"  # Disable auto-create in production
+      KAFKA_NUM_PARTITIONS: 6
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_LOG_RETENTION_HOURS: 720  # 30 days
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '4.0'
+        reservations:
+          memory: 1G
+          cpus: '1.0'
+

@@ -1,0 +1,80 @@
+# =============================================================================
+# .dockerignore - Tối ưu Docker build context
+# Loại bỏ files không cần thiết để giảm build context size và tăng tốc build
+# =============================================================================
+
+# Build artifacts
+target/
+*.jar
+*.war
+*.ear
+*.class
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+.classpath
+.project
+.settings/
+bin/
+
+# Version control
+.git/
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+!README.md
+docs/
+
+# Test files và reports
+**/test/
+**/*Test.java
+**/*Tests.java
+surefire-reports/
+test-results/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Environment files (không commit secrets)
+.env
+.env.local
+.env.*.local
+*.env
+
+# Docker files (tránh recursive copy)
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+Jenkinsfile
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Maven wrapper (nếu không dùng)
+.mvn/wrapper/maven-wrapper.jar
+
+
+
+
+
+

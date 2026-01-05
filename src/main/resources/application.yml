@@ -1,0 +1,95 @@
+spring:
+  application:
+    name: novacore-backend
+
+  # Database Configuration (PostgreSQL)
+  # Configure in application-dev.yml or application-prod.yml
+  datasource:
+    url: jdbc:postgresql://localhost:5432/novacore
+    driver-class-name: org.postgresql.Driver
+    username: novacore
+    password: changeme
+
+  # JPA/Hibernate Configuration
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate  # Use validate when using Flyway for migrations
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+
+  # Flyway Database Migration Configuration
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+
+  # Redis Configuration
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password: changeme
+      timeout: 2000ms
+
+  # Kafka Configuration
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: novacore-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+# Server Configuration
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.novacore: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# Application Configuration
+app:
+  name: NovaCore Backend
+  version: 1.0.0
+
+# CORS Configuration
+cors:
+  allowed-origins:
+    - http://localhost:3000
+    - http://localhost:8080
+  allowed-methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - OPTIONS
+    - PATCH
+  allowed-headers:
+    - "*"
+  allow-credentials: true
+  max-age: 3600
+
+# Async Configuration
+async:
+  core-pool-size: 5
+  max-pool-size: 10
+  queue-capacity: 100
+  thread-name-prefix: "async-"
+  wait-for-tasks-to-complete-on-shutdown: true
+  await-termination-seconds: 30
+

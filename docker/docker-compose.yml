@@ -1,0 +1,177 @@
+services:
+  # ============================================
+  # PostgreSQL Database
+  # ============================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: novacore-postgres
+    profiles:
+      - infra
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-novacore}
+      POSTGRES_USER: ${POSTGRES_USER:-novacore}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - novacore-postgres-data:/var/lib/postgresql/data
+      - ../infra/docker/databases/postgres-init.sh:/docker-entrypoint-initdb.d/init.sh:ro
+    networks:
+      - novacore-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-novacore} -d ${POSTGRES_DB:-novacore}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+
+  # ============================================
+  # Redis Cache
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: novacore-redis
+    profiles:
+      - infra
+    command: >
+      sh -c "redis-server /usr/local/etc/redis/redis.conf
+             --requirepass ${REDIS_PASSWORD:-changeme}
+             --port 6379"
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - novacore-redis-data:/data
+      - ../infra/docker/databases/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    networks:
+      - novacore-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+        reservations:
+          memory: 128M
+          cpus: '0.25'
+
+  # ============================================
+  # Zookeeper (Required for Kafka)
+  # ============================================
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: novacore-zookeeper
+    profiles:
+      - infra
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      ZOOKEEPER_SYNC_LIMIT: 2
+      ZOOKEEPER_INIT_LIMIT: 5
+      ZOOKEEPER_MAX_CLIENT_CNXNS: 60
+    ports:
+      - "${ZOOKEEPER_PORT:-2181}:2181"
+    volumes:
+      - novacore-zookeeper-data:/var/lib/zookeeper/data
+      - novacore-zookeeper-logs:/var/lib/zookeeper/log
+    networks:
+      - novacore-network
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+
+  # ============================================
+  # Kafka Message Broker
+  # ============================================
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: novacore-kafka
+    profiles:
+      - infra
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_NUM_PARTITIONS: 3
+      KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      KAFKA_LOG_RETENTION_HOURS: 168
+      KAFKA_LOG_SEGMENT_BYTES: 1073741824
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 300000
+    ports:
+      - "${KAFKA_PORT:-9092}:9092"
+    volumes:
+      - novacore-kafka-data:/var/lib/kafka/data
+    networks:
+      - novacore-network
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+
+# ============================================
+# Networks
+# ============================================
+networks:
+  novacore-network:
+    driver: bridge
+    name: novacore-network
+
+# ============================================
+# Volumes
+# ============================================
+volumes:
+  novacore-postgres-data:
+    name: novacore-postgres-data
+  novacore-redis-data:
+    name: novacore-redis-data
+  novacore-zookeeper-data:
+    name: novacore-zookeeper-data
+  novacore-zookeeper-logs:
+    name: novacore-zookeeper-logs
+  novacore-kafka-data:
+    name: novacore-kafka-data
+
