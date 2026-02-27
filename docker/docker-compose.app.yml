@@ -1,0 +1,37 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: novacore-app
+    environment:
+      # Profile Spring Boot dùng khi chạy trong container
+      SPRING_PROFILES_ACTIVE: docker
+
+      # Database
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/novacore
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-novacore}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+
+      # Redis
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: ${REDIS_PASSWORD:-changeme}
+
+      # Kafka
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+
+    ports:
+      - "8080:8080"
+
+    networks:
+      - novacore-network
+
+    restart: unless-stopped
+
+networks:
+  # Dùng lại network do file docker-compose infra tạo ra
+  novacore-network:
+    external: true
+    name: novacore-network
+

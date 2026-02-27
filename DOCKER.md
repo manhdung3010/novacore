@@ -262,7 +262,15 @@ docker run --rm -v novacore-postgres-data:/data -v $(pwd)/backups:/backup alpine
 
 ---
 
-**Last Updated**: 2024-12-31
+Code
+Khi chạy infra:
+docker compose -p novacore-infra -f docker/docker-compose.yml --profile infra up -d
+Khi chạy app:
+docker compose -p novacore-app -f docker/docker-compose.app.yml up -d
+Hoặc nếu muốn chung một project name cho cả hạ tầng và app (thường dùng hơn):
+# Infra
+docker compose -p novacore -f docker/docker-compose.yml --profile infra up -d# App (chung stack "novacore")
 
+docker compose -p novacore -f docker/docker-compose.app.yml up -d
 
 

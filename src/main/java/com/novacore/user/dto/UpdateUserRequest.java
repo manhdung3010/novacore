@@ -1,5 +1,6 @@
 package com.novacore.user.dto;
 
+import com.novacore.user.domain.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -28,6 +29,10 @@ public class UpdateUserRequest {
     @Size(max = 20, message = "Phone must not exceed 20 characters")
     @Pattern(regexp = "^[+]?[0-9\\s\\-()]*$", message = "Phone must be a valid phone number", flags = Pattern.Flag.CASE_INSENSITIVE)
     private String phone;
+
+    private Role role;
+
+    private String avatar;
 }
 
 

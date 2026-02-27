@@ -21,6 +21,8 @@ public class UserDto {
     private String fullName;
     private String phone;
     private String status;
+    private String role;
+    private String avatar;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

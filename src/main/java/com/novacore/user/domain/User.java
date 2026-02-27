@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * User domain entity.
  * 
@@ -50,11 +52,46 @@ public class User extends BaseEntity {
     @Builder.Default
     private UserStatus status = UserStatus.ACTIVE;
 
+    @Column(nullable = false, length = 60)
+    private String password;
+
+    @Column(name = "failed_login_attempts", nullable = false)
+    @Builder.Default
+    private Integer failedLoginAttempts = 0;
+
+    @Column(name = "account_locked_until")
+    private LocalDateTime accountLockedUntil;
+
+    @Column(name = "last_login_at")
+    private LocalDateTime lastLoginAt;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    @Builder.Default
+    private Role role = Role.USER;
+
+    @Column(name = "avatar", length = 255)
+    private String avatar;
+
     public enum UserStatus {
         ACTIVE,
         INACTIVE,
         SUSPENDED,
         DELETED
+    }
+
+    /**
+     * Checks if the account is currently locked.
+     */
+    public boolean isAccountLocked() {
+        return accountLockedUntil != null && accountLockedUntil.isAfter(LocalDateTime.now());
+    }
+
+    /**
+     * Checks if the account is active and not locked.
+     */
+    public boolean isActiveAndUnlocked() {
+        return status == UserStatus.ACTIVE && !isAccountLocked();
     }
 }
 

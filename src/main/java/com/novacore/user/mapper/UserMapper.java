@@ -1,5 +1,6 @@
 package com.novacore.user.mapper;
 
+import com.novacore.user.domain.Role;
 import com.novacore.user.domain.User;
 import com.novacore.user.dto.CreateUserRequest;
 import com.novacore.user.dto.UpdateUserRequest;
@@ -21,6 +22,8 @@ public class UserMapper {
                 .fullName(user.getFullName())
                 .phone(user.getPhone())
                 .status(user.getStatus() != null ? user.getStatus().name() : null)
+                .role(user.getRole() != null ? user.getRole().name() : null)
+                .avatar(user.getAvatar())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
                 .build();
@@ -37,6 +40,8 @@ public class UserMapper {
                 .fullName(request.getFullName())
                 .phone(request.getPhone())
                 .status(User.UserStatus.ACTIVE)
+                .role(request.getRole() != null ? request.getRole() : Role.USER)
+                .avatar(request.getAvatar())
                 .build();
     }
 
@@ -56,6 +61,12 @@ public class UserMapper {
         }
         if (request.getPhone() != null) {
             user.setPhone(request.getPhone());
+        }
+        if (request.getRole() != null) {
+            user.setRole(request.getRole());
+        }
+        if (request.getAvatar() != null) {
+            user.setAvatar(request.getAvatar());
         }
     }
 }

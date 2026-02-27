@@ -62,16 +62,17 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
 
-# Application Configuration
-app:
-  name: NovaCore Backend
-  version: 1.0.0
+# Application Configuration (not currently used in code)
+# app:
+#   name: NovaCore Backend
+#   version: 1.0.0
 
 # CORS Configuration
 cors:
   allowed-origins:
     - http://localhost:3000
     - http://localhost:8080
+    - http://localhost:5173
   allowed-methods:
     - GET
     - POST
@@ -92,4 +93,20 @@ async:
   thread-name-prefix: "async-"
   wait-for-tasks-to-complete-on-shutdown: true
   await-termination-seconds: 30
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:your-secret-key-change-in-production-min-256-bits}
+  access-token-ttl: PT15M  # 15 minutes in ISO-8601 duration format
+  refresh-token-ttl: P7D   # 7 days in ISO-8601 duration format
+
+# Authentication Configuration
+auth:
+  max-sessions-per-user: 5  # Maximum concurrent sessions per user (default: no limit if commented)
+  # account-lock-duration: PT30M  # Optional: Account lock duration after failed attempts (30 minutes)
+  
+  # Token cleanup job configuration
+  token-cleanup-interval: 360000  # Cleanup interval in milliseconds
+  token-cleanup-initial-delay: 60000  # Initial delay before first cleanup (milliseconds)
+  # token-cleanup-cron: "0 0 * * * ?"  # Alternative: cron expression (not currently used - code is commented)
 

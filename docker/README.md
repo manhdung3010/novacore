@@ -260,9 +260,3 @@ docker-compose -f novacore/docker-compose.yml down -v
 - [Confluent Kafka Docker Image](https://hub.docker.com/r/confluentinc/cp-kafka)
 
 ---
-
-**Last Updated**: 2025-01-03
-
-
-
-
