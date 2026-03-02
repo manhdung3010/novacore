@@ -1,4 +1,4 @@
-package com.novacore.user.service;
+package com.novacore.user.service.impl;
 
 import com.novacore.shared.constants.ErrorCode;
 import com.novacore.shared.exception.BusinessException;
@@ -9,6 +9,7 @@ import com.novacore.user.dto.UpdateUserRequest;
 import com.novacore.user.dto.UserDto;
 import com.novacore.user.mapper.UserMapper;
 import com.novacore.user.repository.UserRepository;
+import com.novacore.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -110,3 +111,4 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 }
+

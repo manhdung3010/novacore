@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Builder.Default;
 
 /**
  * Response DTO for successful registration.
@@ -17,6 +18,7 @@ public class RegisterResponse {
 
     private String accessToken;
     private String refreshToken;
+    @Default
     private String tokenType = "Bearer";
     private Long expiresIn; // seconds
     private Long userId;

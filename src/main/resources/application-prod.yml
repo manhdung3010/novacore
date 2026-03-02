@@ -56,6 +56,13 @@ logging:
   pattern:
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
+# SpringDoc: disable Swagger UI in production (optional: keep api-docs for internal tools)
+springdoc:
+  api-docs:
+    enabled: ${SPRINGDOC_API_DOCS_ENABLED:false}
+  swagger-ui:
+    enabled: ${SPRINGDOC_SWAGGER_UI_ENABLED:false}
+
 # Server Configuration for Production
 server:
   port: ${PORT:8080}

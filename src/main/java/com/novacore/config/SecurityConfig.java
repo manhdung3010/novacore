@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -87,6 +88,12 @@ public class SecurityConfig {
                         
                         // Health endpoints
                         .requestMatchers("/health", "/actuator/health").permitAll()
+
+                        // Resolve invite by code (GET only - public preview; POST /accept requires auth)
+                        .requestMatchers(HttpMethod.GET, "/api/v1/invites/*").permitAll()
+
+                        // Swagger / OpenAPI (dev only in prod via springdoc config)
+                        .requestMatchers("/api-docs", "/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                         
                         // All other /api/** endpoints require authentication
                         .requestMatchers("/api/**").authenticated()

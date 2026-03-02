@@ -94,6 +94,19 @@ async:
   wait-for-tasks-to-complete-on-shutdown: true
   await-termination-seconds: 30
 
+# SpringDoc OpenAPI (Swagger)
+# Note: "v3" = OpenAPI specification version (3.0), not your API version. Path can be customized below.
+springdoc:
+  api-docs:
+    path: /api-docs   # OpenAPI 3 JSON (was /v3/api-docs by convention)
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operationsSorter: method
+    tagsSorter: alpha
+  show-actuator: false
+
 # JWT Configuration
 jwt:
   secret: ${JWT_SECRET:your-secret-key-change-in-production-min-256-bits}

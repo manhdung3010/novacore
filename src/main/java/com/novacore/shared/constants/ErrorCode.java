@@ -34,7 +34,11 @@ public enum ErrorCode {
     USER_400_USERNAME_EXISTS("USER_400_USERNAME_EXISTS", HttpStatus.BAD_REQUEST, "Username already exists"),
     USER_400_EMAIL_EXISTS("USER_400_EMAIL_EXISTS", HttpStatus.BAD_REQUEST, "Email already exists"),
     USER_404_NOT_FOUND("USER_404_NOT_FOUND", HttpStatus.NOT_FOUND, "User not found"),
-    
+
+    SERVER_404_INVITE_NOT_FOUND("SERVER_404_INVITE_NOT_FOUND", HttpStatus.NOT_FOUND, "Invite not found or invalid"),
+    SERVER_400_INVITE_EXPIRED("SERVER_400_INVITE_EXPIRED", HttpStatus.BAD_REQUEST, "Invite has expired or reached max uses"),
+    SERVER_409_ALREADY_MEMBER("SERVER_409_ALREADY_MEMBER", HttpStatus.CONFLICT, "Already a member of this server"),
+
     SYS_500_INTERNAL_ERROR("SYS_500_INTERNAL_ERROR", HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error");
     
     private final String code;

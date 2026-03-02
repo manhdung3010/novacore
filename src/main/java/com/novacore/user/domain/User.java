@@ -70,8 +70,9 @@ public class User extends BaseEntity {
     @Builder.Default
     private Role role = Role.USER;
 
-    @Column(name = "avatar", length = 255)
-    private String avatar;
+    @Column(name = "avatar", nullable = false, length = 255)
+    @Builder.Default
+    private String avatar = "";
 
     public enum UserStatus {
         ACTIVE,
