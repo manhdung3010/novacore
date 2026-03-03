@@ -3,6 +3,7 @@ package com.novacore.config;
 import com.novacore.auth.security.JwtAuthenticationFilter;
 import com.novacore.config.properties.AuthProperties;
 import com.novacore.config.properties.JwtProperties;
+import com.novacore.shared.constants.ApiConstants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -13,22 +14,17 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 import org.springframework.web.cors.CorsUtils;
 
-/**
- * Security configuration for authentication and authorization.
- * 
- * Design principles:
- * - Configures JWT-based authentication
- * - Public endpoints: /api/auth/login, /api/auth/refresh, /health
- * - Protected endpoints: /api/** (requires authentication)
- * - Stateless session management (JWT tokens)
- * - CSRF disabled (not needed for stateless JWT)
- */
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -46,17 +42,7 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * Configures the security filter chain.
-     * 
-     * Public endpoints:
-     * - /api/auth/login
-     * - /api/auth/refresh
-     * - /health
-     * 
-     * Protected endpoints:
-     * - /api/** (requires valid JWT token)
-     */
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -81,13 +67,18 @@ public class SecurityConfig {
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
 
                         // Public auth endpoints - use specific paths to ensure they're matched first
-                        .requestMatchers("/api/auth/register", 
-                                        "/api/auth/login", 
-                                        "/api/auth/refresh", 
-                                        "/api/auth/logout").permitAll()
+                        .requestMatchers(
+                                ApiConstants.AUTH_ENDPOINT + "/register",
+                                ApiConstants.AUTH_ENDPOINT + "/login",
+                                ApiConstants.AUTH_ENDPOINT + "/refresh",
+                                ApiConstants.AUTH_ENDPOINT + "/logout"
+                        ).permitAll()
                         
                         // Health endpoints
                         .requestMatchers("/health", "/actuator/health").permitAll()
+
+                        // WebSocket STOMP endpoint (authentication handled at message level)
+                        .requestMatchers("/ws", "/ws/**").permitAll()
 
                         // Resolve invite by code (GET only - public preview; POST /accept requires auth)
                         .requestMatchers(HttpMethod.GET, "/api/v1/invites/*").permitAll()
@@ -100,11 +91,27 @@ public class SecurityConfig {
                         
                         // Allow all other requests (for non-API endpoints)
                         .anyRequest().permitAll())
-                
+                // Exception handling:
+                // - 401 for missing/invalid/expired token (authentication failure)
+                // - 403 for authenticated user without required authority
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(new HttpStatusEntryPoint(org.springframework.http.HttpStatus.UNAUTHORIZED))
+                        .accessDeniedHandler(accessDeniedHandler())
+                )
                 // Add JWT authentication filter before UsernamePasswordAuthenticationFilter
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    /**
+     * AccessDeniedHandler that keeps 403 for authorized but forbidden access.
+     */
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        AccessDeniedHandlerImpl handler = new AccessDeniedHandlerImpl();
+        handler.setErrorPage(null); // return 403 JSON instead of redirect
+        return handler;
     }
 }
 

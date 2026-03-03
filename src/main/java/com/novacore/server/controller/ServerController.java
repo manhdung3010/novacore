@@ -47,7 +47,7 @@ public class ServerController {
     }
 
     @GetMapping
-    public ResponseEntity<ServerListResponse> getServers(@ModelAttribute ServerListFilter filter) {
+    public ResponseEntity<ServerListResponse> getServers(@Valid @ModelAttribute ServerListFilter filter) {
         ServerListResponse response = serverService.getServers(filter != null ? filter : ServerListFilter.builder().build());
         return ResponseEntity.ok(response);
     }

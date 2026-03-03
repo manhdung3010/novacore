@@ -9,6 +9,7 @@ import com.novacore.auth.dto.RegisterRequest;
 import com.novacore.auth.dto.RegisterResponse;
 import com.novacore.auth.service.AuthService;
 import com.novacore.auth.util.SecurityUtils;
+import com.novacore.shared.constants.ApiConstants;
 import com.novacore.shared.response.ApiResponse;
 import com.novacore.shared.response.ApiResponseBuilder;
 import com.novacore.user.dto.UserDto;
@@ -29,7 +30,7 @@ import org.springframework.web.bind.annotation.*;
  * - Returns standardized ApiResponse format
  */
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping(ApiConstants.AUTH_ENDPOINT)
 @RequiredArgsConstructor
 public class AuthController {
 

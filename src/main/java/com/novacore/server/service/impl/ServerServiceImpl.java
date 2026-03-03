@@ -123,6 +123,14 @@ public class ServerServiceImpl implements ServerService {
         Server server = serverMapper.toEntity(request, owner);
         Server saved = serverRepository.save(server);
 
+        ServerMember ownerMember = ServerMember.builder()
+                .server(saved)
+                .user(owner)
+                .nickname(owner.getFullName())
+                .joinedAt(LocalDateTime.now())
+                .build();
+        serverMemberRepository.save(ownerMember);
+
         // Create default text and voice channels for the new server
         ServerChannel textChannel = ServerChannel.builder()
                 .server(saved)

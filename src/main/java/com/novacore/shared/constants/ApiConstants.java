@@ -11,7 +11,8 @@ public final class ApiConstants {
     public static final String DEFAULT_API_VERSION = "v1";
     
     public static final String HEALTH_ENDPOINT = "/health";
-    
+
+    public static final String AUTH_ENDPOINT = "/api/v1/auth";
     public static final String USERS_ENDPOINT = "/api/v1/users";
     public static final String SERVERS_ENDPOINT = "/api/v1/servers";
     public static final String INVITES_ENDPOINT = "/api/v1/invites";

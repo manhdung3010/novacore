@@ -40,7 +40,7 @@ public class OpenApiConfig {
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
                                         .bearerFormat("JWT")
-                                        .description("JWT access token. Login via POST /api/auth/login, then paste the accessToken here.")));
+                                        .description("JWT access token. Login via POST /api/v1/auth/login, then paste the accessToken here.")));
     }
 
     private Info apiInfo() {
