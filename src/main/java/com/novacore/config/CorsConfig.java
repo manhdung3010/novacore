@@ -26,10 +26,15 @@ public class CorsConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cors = new CorsConfiguration();
-        cors.setAllowedOrigins(corsProperties.getAllowedOrigins());
-        cors.setAllowedMethods(corsProperties.getAllowedMethods());
-        cors.setAllowedHeaders(corsProperties.getAllowedHeaders());
-        cors.setAllowCredentials(corsProperties.isAllowCredentials());
+        // cors.setAllowedOrigins(corsProperties.getAllowedOrigins());
+        // cors.setAllowedMethods(corsProperties.getAllowedMethods());
+        // cors.setAllowedHeaders(corsProperties.getAllowedHeaders());
+        // cors.setAllowCredentials(corsProperties.isAllowCredentials());
+
+        cors.addAllowedOriginPattern("*");
+        cors.addAllowedHeader("*");
+        cors.addAllowedMethod("*");
+        cors.setAllowCredentials(true);
         cors.setMaxAge(corsProperties.getMaxAge());
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

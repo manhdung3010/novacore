@@ -152,6 +152,36 @@ services:
           memory: 512M
           cpus: '0.5'
 
+  # ============================================
+  # Kafka UI
+  # ============================================
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: novacore-kafka-ui
+    profiles:
+      - infra
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      KAFKA_CLUSTERS_0_NAME: novacore
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+      SERVER_PORT: 8080
+    ports:
+      - "${KAFKA_UI_PORT:-8081}:8080"
+    networks:
+      - novacore-network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '1.0'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+
 # ============================================
 # Networks
 # ============================================
