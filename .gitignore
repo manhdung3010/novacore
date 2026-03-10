@@ -51,3 +51,5 @@ application-local.yml
 *.db
 *.mv.db
 *.trace.db
+
+.env

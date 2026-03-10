@@ -1,5 +1,5 @@
 # Production overrides for docker-compose.yml
-# Usage: docker-compose -f novacore/docker-compose.yml -f novacore/docker-compose.prod.yml --profile infra up -d
+# Usage: docker compose -f docker/docker-compose.yml -f docker/docker-compose.prod.yml --profile infra up -d
 
 services:
   postgres:
