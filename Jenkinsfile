@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    options {
+        skipDefaultCheckout(true)
+    }
+
     parameters {
         string(
             name: 'ENV_FILE',
@@ -13,65 +17,52 @@ pipeline {
 
         stage('Checkout Source') {
             steps {
-                checkout scm
+                git branch: 'main',
+                    url: 'https://github.com/manhdung3010/novacore.git'
             }
         }
 
         stage('Verify Environment') {
             steps {
-                sh """
-                    echo "Checking Docker installation..."
+                sh '''
                     docker --version
                     docker compose version
 
-                    echo "Using ENV file:"
-                    echo ${params.ENV_FILE}
-
-                    if [ ! -f "${params.ENV_FILE}" ]; then
-                      echo "ENV file not found!"
-                      exit 1
+                    if [ ! -f "$ENV_FILE" ]; then
+                        echo "ENV file not found!"
+                        exit 1
                     fi
-                """
+                '''
             }
         }
 
         stage('Deploy Infrastructure') {
             steps {
-                sh """
-                    set -e
-
+                sh '''
                     docker compose \
-                      --env-file ${params.ENV_FILE} \
+                      --env-file $ENV_FILE \
                       -f docker/docker-compose.yml \
                       -f docker/docker-compose.prod.yml \
                       --profile infra \
                       up -d
-                """
+                '''
             }
         }
 
         stage('Build & Deploy App') {
             steps {
-                sh """
-                    set -e
-
+                sh '''
                     docker compose \
-                      --env-file ${params.ENV_FILE} \
+                      --env-file $ENV_FILE \
                       -f docker/docker-compose.app.yml \
                       up -d --build
-                """
+                '''
             }
         }
 
     }
 
     post {
-        success {
-            echo "Deploy success"
-        }
-        failure {
-            echo "Deploy failed"
-        }
         always {
             sh "docker ps"
         }
