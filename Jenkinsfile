@@ -1,22 +1,54 @@
 pipeline {
     agent any
 
+    parameters {
+        string(
+            name: 'ENV_FILE',
+            defaultValue: '.env',
+            description: 'Path to env file'
+        )
+    }
+
     stages {
-        stage('Test') {
+
+        stage('Checkout') {
             steps {
-                echo 'Jenkins pipeline is running'
+                checkout scm
+            }
+        }
 
+        stage('Deploy Infrastructure') {
+            steps {
                 sh '''
-                    echo "Current user:"
-                    whoami
-
-                    echo "Current directory:"
-                    pwd
-
-                    echo "List files:"
-                    ls -la
+                    docker compose \
+                      --env-file ${ENV_FILE} \
+                      -f docker/docker-compose.yml \
+                      -f docker/docker-compose.prod.yml \
+                      --profile infra \
+                      up -d
                 '''
             }
+        }
+
+        stage('Build & Deploy App') {
+            steps {
+                sh '''
+                    docker compose \
+                      --env-file ${ENV_FILE} \
+                      -f docker/docker-compose.app.yml \
+                      up -d --build
+                '''
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo "Deploy success"
+        }
+        failure {
+            echo "Deploy failed"
         }
     }
 }
