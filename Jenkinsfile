@@ -1,26 +1,22 @@
 pipeline {
-  agent {
-        docker {
-            image 'maven:3.9.9-eclipse-temurin-21'
+    agent any
+
+    stages {
+        stage('Test') {
+            steps {
+                echo 'Jenkins pipeline is running'
+
+                sh '''
+                    echo "Current user:"
+                    whoami
+
+                    echo "Current directory:"
+                    pwd
+
+                    echo "List files:"
+                    ls -la
+                '''
+            }
         }
     }
-
-  stages {
-
-    stage('Build') {
-      steps {
-        sh 'mvn clean verify'
-      }
-    }
-
-    stage('Deploy') {
-      when {
-        branch 'main'
-      }
-      steps {
-        echo "Deploy production"
-      }
-    }
-
-  }
 }
