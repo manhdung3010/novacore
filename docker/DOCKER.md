@@ -3,7 +3,7 @@
 ## Assumptions
 
 - You have Docker Desktop (Compose v2) installed.
-- The backend is a Spring Boot app listening on port `8080`.
+- The backend is a Spring Boot app listening on port `5001` (avoids conflict with Jenkins on 8080).
 - Infra dependencies are run via `docker/docker-compose.yml` using the `infra` profile.
 
 ## High-level design
@@ -60,7 +60,7 @@ Infra compose supports these (with defaults for local):
 - `REDIS_PASSWORD` (default `changeme`)
 - `REDIS_PORT` (default `6379`)
 - `KAFKA_PORT` (default `9092`)
-- `KAFKA_UI_PORT` (default `8081`)
+- `KAFKA_UI_PORT` (default `8090`)
 - `ZOOKEEPER_PORT` (default `2181`)
 
 App compose reads:
@@ -77,7 +77,7 @@ docker compose -f docker/docker-compose.yml -f docker/docker-compose.prod.yml --
 Notes:
 
 - This only affects infra services in `docker-compose.yml`.
-- The app exposure (e.g. `8080:8080`) is controlled by `docker-compose.app.yml`.
+- The app exposure (e.g. `5001:5001`) is controlled by `docker-compose.app.yml`.
 
 ### Troubleshooting
 

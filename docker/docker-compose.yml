@@ -171,9 +171,10 @@ services:
       KAFKA_CLUSTERS_0_NAME: novacore
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
-      SERVER_PORT: 8080
+      # 8090 to avoid conflict with Jenkins on 8080
+      SERVER_PORT: 8090
     ports:
-      - "${KAFKA_UI_PORT:-8081}:8080"
+      - "${KAFKA_UI_PORT:-8090}:8090"
     networks:
       - novacore-network
     restart: unless-stopped

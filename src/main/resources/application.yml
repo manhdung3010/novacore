@@ -48,9 +48,9 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 
-# Server Configuration
+# Server Configuration (5001 to avoid conflict with Jenkins on 8080)
 server:
-  port: 8080
+  port: 5001
   servlet:
     context-path: /
 
@@ -71,7 +71,7 @@ logging:
 cors:
   allowed-origins:
     - http://localhost:3000
-    - http://localhost:8080
+    - http://localhost:5001
     - http://localhost:5173
   allowed-methods:
     - GET

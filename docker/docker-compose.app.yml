@@ -7,6 +7,8 @@ services:
     environment:
       # Profile Spring Boot dùng khi chạy trong container
       SPRING_PROFILES_ACTIVE: docker
+      # App port (tránh trùng Jenkins 8080)
+      SERVER_PORT: 5001
 
       # Database
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/novacore

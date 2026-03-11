@@ -63,9 +63,9 @@ springdoc:
   swagger-ui:
     enabled: ${SPRINGDOC_SWAGGER_UI_ENABLED:false}
 
-# Server Configuration for Production
+# Server Configuration for Production (5001 to avoid conflict with Jenkins on 8080)
 server:
-  port: ${PORT:8080}
+  port: ${PORT:5001}
   error:
     include-stacktrace: never
     include-message: on_param

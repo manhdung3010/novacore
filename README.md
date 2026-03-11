@@ -140,7 +140,7 @@ DELETE /api/v1/users/{id}      # Delete user
 
 **Create User:**
 ```bash
-curl -X POST http://localhost:8080/api/v1/users \
+curl -X POST http://localhost:5001/api/v1/users \
   -H "Content-Type: application/json" \
   -d '{
     "username": "johndoe",
@@ -237,7 +237,7 @@ DB_PASSWORD=your_password
 REDIS_HOST=localhost
 REDIS_PORT=6379
 KAFKA_BOOTSTRAP_SERVERS=localhost:9092
-PORT=8080
+PORT=5001
 ```
 
 ## 🎯 Best Practices Implemented
