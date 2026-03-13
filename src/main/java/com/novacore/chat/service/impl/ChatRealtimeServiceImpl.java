@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +63,7 @@ public class ChatRealtimeServiceImpl implements ChatRealtimeService {
 
         ChatMessageEvent event = ChatMessageEvent.builder()
                 .eventType("MESSAGE_CREATED")
+                .messageId(UUID.randomUUID().toString())
                 .serverId(serverId)
                 .channelId(channelId)
                 .authorId(authorId)
